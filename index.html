@@ -36,7 +36,7 @@
 
         async function renderPDF(blob){
             // pdf = await pdfjsLib.getDocument(URL.createObjectURL(blob)).promise;
-            const pdf = await pdfjsLib.getDocument("/ETHz_CaseStudy_2022.pdf").promise;
+            const pdf = await pdfjsLib.getDocument("ETHz_CaseStudy_2022/ETHz_CaseStudy_2022.pdf").promise;
             const metaData = await pdf.getMetadata()
             var $el_title      = document.getElementById("title")
             var $el_author     = document.getElementById("author")
