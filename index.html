@@ -8,7 +8,7 @@
     <meta name="author" content="mingyuan chi">
     <meta name="Robots" content="all">
     <title>ETHz-CasStudy2022-Mingyuan-Chi</title>
-    <link rel="icon" sizes="192x192" href="/ethz.png">
+    <link rel="icon" sizes="192x192" href="ethz.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/reset.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/reveal.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/theme/white.min.css">
@@ -36,7 +36,7 @@
 
         async function renderPDF(blob){
             // pdf = await pdfjsLib.getDocument(URL.createObjectURL(blob)).promise;
-            const pdf = await pdfjsLib.getDocument("ETHz_CaseStudy_2022/ETHz_CaseStudy_2022.pdf").promise;
+            const pdf = await pdfjsLib.getDocument("ETHz_CaseStudy_2022.pdf").promise;
             const metaData = await pdf.getMetadata()
             var $el_title      = document.getElementById("title")
             var $el_author     = document.getElementById("author")
