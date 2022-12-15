@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="ethz, ETHz, Case Study, Department of Mathematics, Computational Science Engineering, Space Elevator, 2022">
+    <meta name="author" content="mingyuan chi">
+    <meta name="Robots" content="all">
+    <title>ETHz-CasStudy2022-Mingyuan-Chi</title>
+    <link rel="icon" sizes="192x192" href="/ethz.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/reset.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/reveal.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/theme/white.min.css">
+    <style>
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+          <section>
+            <h2 id="title"></h2>
+            <p id="author"></p>
+          </section>
+          
+        </div>
+        
+    </div>
+    <canvas id="canvas" ></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/plugin/notes/notes.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.2.0/reveal.min.js"></script>
+    <script type="text/javascript" src="https://rawgithub.com/mozilla/pdf.js/gh-pages/build/pdf.js"></script>
+    <script >
+        pdfjsLib.disableWorker = true;
+
+
+        async function renderPDF(blob){
+            // pdf = await pdfjsLib.getDocument(URL.createObjectURL(blob)).promise;
+            const pdf = await pdfjsLib.getDocument("/ETHz_CaseStudy_2022.pdf").promise;
+            const metaData = await pdf.getMetadata()
+            var $el_title      = document.getElementById("title")
+            var $el_author     = document.getElementById("author")
+           
+            $el_title.innerText = metaData.info.Title 
+            $el_author.innerText = metaData.info.Author 
+
+            const outlines = await pdf.getOutline()
+        
+            var indexs   = await Promise.all(outlines.map(async outline=>{
+                dest = await pdf.getDestination(outline.dest)
+                ref  = await pdf.getPageIndex(dest[0])
+                return ref
+            }))
+            indexs.push(pdf.numPages)
+            indexs   = indexs.map((index, i, array)=>{
+                const last = i==0?0:array[i-1]
+                return [...Array(index-last).keys()].map(i=>i+last)
+            })
+            const $el_slides = document.getElementsByClassName("slides")[0]
+            const $elss_canvas   = await Promise.all(indexs.map(async index=>{
+                return await Promise.all(index.map(async i=>{
+                    const page          = await pdf.getPage(i + 1)
+                    const widthScale    = (parseInt($el_slides.style.width.match(/\d+/g)) / page.view[2]) 
+                    const heightScale   = (parseInt($el_slides.style.height.match(/\d+/g)) / page.view[3])
+                    const scale         = widthScale > heightScale ? heightScale : widthScale
+                    const outputScale   = window.devicePixelRatio || 1
+                    console.log($el_slides)
+                    var viewport      = page.getViewport({scale})
+                    const $el_canvas    = document.createElement('canvas')
+                    //console.log(viewport)
+                    // viewport.width      = viewport.viewBox[2]
+                    // viewport.height     = viewport.viewBox[3]
+                    $el_canvas.width       = Math.floor(viewport.width * outputScale)
+                    $el_canvas.height      = Math.floor(viewport.height * outputScale)
+                    $el_canvas.style.width = Math.floor(viewport.width) + "px"
+                    $el_canvas.style.height= Math.floor(viewport.height) + "px"
+                    const renderContext = {
+                    canvasContext:$el_canvas.getContext('2d'),
+                    viewport,
+                    transform:[outputScale, 0, 0, outputScale, 0, 0]
+                    }
+                    await page.render(renderContext)
+                    return $el_canvas
+                  
+                }))
+            }))
+            $elss_canvas.forEach($els_canvas=>{
+                $el_section_col = document.createElement("section") 
+                $els_canvas.forEach($el_canvas=>{
+                    $el_section = document.createElement("section")
+                    $el_section.appendChild($el_canvas)
+                    $el_section_col.appendChild($el_section)
+                })
+                $el_slides.appendChild($el_section_col)
+            })
+        }
+
+        var req = new XMLHttpRequest()
+        req.onload = function(){
+            if(this.status == 200){
+                console.log(typeof(this.response))
+                var blob  = new Blob([this.response], {type:'"application/pdf"'})
+                renderPDF(blob)
+            }else{
+                console.log("request fail")
+                console.log(this)
+            }
+        }
+        req.open("GET", "ETHz_CaseStudy_2022.pdf", true)
+        req.responseType = 'arraybuffer'
+        
+        
+       
+        Reveal.initialize({
+            width: window.innerWidth,
+            height:window.innerHeight,
+            margin:0.0,
+            center:true,
+            control:true,
+            keyboard:true,
+            touch:true,
+            mouseWheel:true,
+            // transition:'slide'
+        }).then(()=>{
+            req.send()
+        })
+       
+        
+
+    </script>
+</body>
+</html>
