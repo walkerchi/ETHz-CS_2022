@@ -19,8 +19,9 @@
     <div class="reveal">
         <div class="slides">
           <section>
-            <h2 id="title"></h2>
-            <p id="author"></p>
+            <h2 id="title">Space Elevator is  closer than we think</h2>
+            <p id="author">Chi.Mingyuan</p>
+            <img src="url.png" width="192px" height="192px">
           </section>
           
         </div>
@@ -37,12 +38,12 @@
         async function renderPDF(blob){
             // pdf = await pdfjsLib.getDocument(URL.createObjectURL(blob)).promise;
             const pdf = await pdfjsLib.getDocument("ETHz_CaseStudy_2022.pdf").promise;
-            const metaData = await pdf.getMetadata()
-            var $el_title      = document.getElementById("title")
-            var $el_author     = document.getElementById("author")
+            // const metaData = await pdf.getMetadata()
+            // var $el_title      = document.getElementById("title")
+            // var $el_author     = document.getElementById("author")
            
-            $el_title.innerText = metaData.info.Title 
-            $el_author.innerText = metaData.info.Author 
+            // $el_title.innerText = metaData.info.Title 
+            // $el_author.innerText = metaData.info.Author 
 
             const outlines = await pdf.getOutline()
         
